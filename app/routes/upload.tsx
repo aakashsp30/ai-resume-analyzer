@@ -1,4 +1,4 @@
-import { prepareInstructions } from "constants/index";
+import { prepareInstructions } from "constants";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 import FileUploader from "~/components/FileUploader";
@@ -10,7 +10,7 @@ import { generateUUID } from "~/lib/utils";
 const upload = () => {
   const { auth, isLoading, fs, ai, kv } = usePuterStore();
   const navigate = useNavigate();
-  const [isProccessing, setIsProccessing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [statusText, setStatusText] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
@@ -29,7 +29,7 @@ const upload = () => {
     jobDescription: string;
     file: File;
   }) => {
-    setIsProccessing(true);
+    setIsProcessing(true);
 
     setStatusText("Uploading the file...");
     const uploadedFile = await fs.upload([file]);
@@ -39,7 +39,8 @@ const upload = () => {
     setStatusText("Converting to image...");
     const imageFile = await convertPdfToImage(file);
 
-    if (!imageFile.file) return setStatusText("Error: Failed to convert PDF to image");
+    if (!imageFile.file)
+      return setStatusText("Error: Failed to convert PDF to image");
 
     setStatusText("Uploading the image...");
     const uploadedImage = await fs.upload([imageFile.file]);
@@ -100,7 +101,7 @@ const upload = () => {
       <section className="main-section">
         <div className="page-heading py-16">
           <h1>Smart feedback for your dream job</h1>
-          {isProccessing ? (
+          {isProcessing ? (
             <>
               <h2>{statusText}</h2>
               <img src="/images/resume-scan.gif" className="w-full" />
@@ -108,7 +109,7 @@ const upload = () => {
           ) : (
             <h2>Drop your resume for an ATS score and improvement tips</h2>
           )}
-          {!isProccessing && (
+          {!isProcessing && (
             <form
               id="upload-form"
               onSubmit={handleSubmit}
